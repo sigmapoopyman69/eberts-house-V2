@@ -3,70 +3,448 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Games Site</title>
+    <title>Modern Game Hub</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .game-link { display: block; margin: 10px 0; font-size: 18px; text-transform: capitalize; }
+        /* --- 🎨 MODERN THEME DEFINITIONS --- */
+        :root {
+            --bg-color: #0d0202;
+            --text-color: #f5e6e6;
+            --accent-color: #ff3333;
+            --panel-bg: rgba(45, 10, 10, 0.4);
+            --border-color: rgba(255, 51, 51, 0.2);
+            --font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        [data-theme="jungle"] {
+            --bg-color: #040d04;
+            --text-color: #e6f5e6;
+            --accent-color: #00ff66;
+            --panel-bg: rgba(10, 45, 10, 0.4);
+            --border-color: rgba(0, 255, 102, 0.2);
+        }
+
+        [data-theme="steam"] {
+            --bg-color: #10141d;
+            --text-color: #dbe2e9;
+            --accent-color: #4facfe;
+            --panel-bg: rgba(27, 40, 56, 0.5);
+            --border-color: rgba(79, 172, 254, 0.2);
+        }
+
+        [data-theme="nighttime"] {
+            --bg-color: #030712;
+            --text-color: #f3f4f6;
+            --accent-color: #6366f1;
+            --panel-bg: rgba(31, 41, 55, 0.4);
+            --border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        [data-theme="galaxy"] {
+            --bg-color: #05021a;
+            --text-color: #f0e6ff;
+            --accent-color: #bf55ec;
+            --panel-bg: rgba(30, 15, 60, 0.4);
+            --border-color: rgba(191, 85, 236, 0.2);
+        }
+
+        [data-theme="cyberpunk"] {
+            --bg-color: #000000;
+            --text-color: #00ff9f;
+            --accent-color: #ff0055;
+            --panel-bg: rgba(20, 20, 20, 0.6);
+            --border-color: rgba(255, 0, 85, 0.3);
+        }
+
+        /* --- 🖌️ BASE STYLES & GLASSMORPHISM --- */
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: var(--font-family); 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Background Canvas for Particles */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            padding: 20px 30px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        h1 { 
+            margin: 0; 
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, var(--text-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- ⚙️ CONTROLS & UI --- */
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .settings-btn:hover { 
+            background: var(--accent-color); 
+            color: #fff;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        .settings-panel {
+            display: none;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .settings-panel.active { display: flex; align-items: center; gap: 15px; }
+
+        select {
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* --- 🎮 MODERN CARD LAYOUT --- */
+        #game-container {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        #game-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 0 10px rgba(255,255,255,0.02);
+        }
+
+        .game-link { 
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 16px; 
+            font-weight: 600;
+            text-transform: capitalize; 
+            display: block;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        #loading-message {
+            text-align: center;
+            opacity: 0.7;
+            font-size: 16px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-    <h1>🎮 Game Library</h1>
-    <div id="game-container">
-        <p id="loading-message">Loading games...</p>
-        <ul id="game-list"></ul> 
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="main-wrapper">
+        <div class="header-container">
+            <h1>ebert's house V2</h1>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️ Customise</button>
+        </div>
+
+        <div id="settings-panel" class="settings-panel">
+            <label for="theme-select"><strong>Select Environment:</strong></label>
+            <select id="theme-select" onchange="changeTheme(this.value)">
+                <option value="blood-moon">Blood Moon</option>
+                <option value="jungle">Jungle Canopy</option>
+                <option value="steam">Steam Deck</option>
+                <option value="nighttime">Deep Nighttime</option>
+                <option value="galaxy">Cosmic Galaxy</option>
+                <option value="cyberpunk">Watermelon</option>
+            </select>
+        </div>
+
+        <div id="game-container">
+            <p id="loading-message">Scanning directory for payloads...</p>
+            <ul id="game-list"></ul> 
+        </div>
     </div>
 
     <script>
-        // --- 🛑 IMPORTANT: CHANGE THESE TO YOUR GITHUB DETAILS 🛑 ---
-        const githubUsername = "YOUR_GITHUB_USERNAME"; 
-        const repoName = "YOUR_REPO_NAME"; 
-        const folderName = "games"; 
-        // ------------------------------------------------------------
+      // --- 🎨 ENVIRONMENT & ACCENT SHIFTS ---
+let currentTheme = 'blood-moon';
 
-        async function fetchGames() {
-            // This is the GitHub API URL that looks inside your specific folder
-            const apiUrl = `https://api.github.com/repos/${githubUsername}/${repoName}/contents/${folderName}`;
-            
-            try {
-                const response = await fetch(apiUrl);
-                
-                // If the folder isn't found or the repo is private, this catches the error
-                if (!response.ok) throw new Error("Could not load the games folder.");
-                
-                const files = await response.json();
-                const gameList = document.getElementById("game-list");
-                document.getElementById("loading-message").style.display = "none";
+function changeTheme(themeName) {
+    currentTheme = themeName;
+    document.documentElement.setAttribute('data-theme', themeName);
+    localStorage.setItem('selected-theme', themeName);
+    resetParticles(); 
+}
 
-                // Loop through every file GitHub found in the folder
-                files.forEach(file => {
-                    // We only want to list .html files
-                    if (file.name.endsWith(".html")) {
-                        
-                        // Create the game name by removing ".html" and replacing dashes with spaces
-                        let gameName = file.name.replace(".html", "").replace(/-/g, " ");
+function toggleSettings() {
+    document.getElementById('settings-panel').classList.toggle('active');
+}
 
-                        // Create the HTML list item and link
-                        const listItem = document.createElement("li");
-                        const link = document.createElement("a");
-                        link.href = file.path; // Links directly to the games/filename.html
-                        link.textContent = gameName;
-                        link.className = "game-link";
+const savedTheme = localStorage.getItem('selected-theme') || 'blood-moon';
+changeTheme(savedTheme);
+document.getElementById('theme-select').value = savedTheme;
 
-                        // Add the link to the page
-                        listItem.appendChild(link);
-                        gameList.appendChild(listItem);
-                    }
-                });
-            } catch (error) {
-                document.getElementById("loading-message").textContent = "Error loading games. Make sure your repo is public and the details are correct!";
-                console.error(error);
-            }
+// --- 🌌 ANIMATED CANVAS ENGINE (With Galaxy Constellations) ---
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+
+let particles = [];
+const mouse = { x: null, y: null, radius: 150 };
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+});
+window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.4; // Slower movement for realistic night sky
+        this.speedY = (Math.random() - 0.5) * 0.4;
+        this.id = Math.random(); // Unique ID to help group constellations
+        this.twinkleSpeed = 0.01 + Math.random() * 0.03;
+        this.alpha = Math.random();
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // Twinkle effect calculation
+        this.alpha += this.twinkleSpeed;
+        if (this.alpha > 1 || this.alpha < 0.2) {
+            this.twinkleSpeed = -this.twinkleSpeed;
         }
 
-        // Run the function when the page loads
-        fetchGames();
-    </script>
+        if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+        if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
 
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let distance = Math.hypot(dx, dy);
+        if (distance < mouse.radius && mouse.x !== null) {
+            this.x -= dx * 0.01;
+            this.y -= dy * 0.01;
+        }
+    }
+
+    draw() {
+        ctx.save();
+        ctx.beginPath();
+
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        ctx.fillStyle = accentColor;
+        ctx.shadowColor = accentColor;
+
+        if (currentTheme === 'blood-moon') {
+            // Diamond/Ruby Shapes
+            ctx.translate(this.x, this.y);
+            ctx.rotate(Math.PI / 4);
+            ctx.shadowBlur = 8;
+            ctx.fillStyle = `rgba(255, 51, 51, ${this.alpha})`;
+            ctx.fillRect(-this.size, -this.size, this.size * 1.5, this.size * 1.5);
+        } else if (currentTheme === 'galaxy') {
+            // Glowing Twinkling Constellation Stars
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = `rgba(240, 230, 255, ${this.alpha})`;
+            ctx.arc(this.x, this.y, this.size * 0.9, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            // Standard crisp round structural nodes
+            ctx.shadowBlur = 4;
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+}
+
+function initParticles() {
+    particles = [];
+    const count = Math.min(Math.floor((canvas.width * canvas.height) / 10000), 120);
+    for (let i = 0; i < count; i++) {
+        particles.push(new Particle());
+    }
+}
+
+function resetParticles() {
+    initParticles();
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+            let dx = particles[i].x - particles[j].x;
+            let dy = particles[i].y - particles[j].y;
+            let dist = Math.hypot(dx, dy);
+
+            // Theme-based connection configurations
+            if (currentTheme === 'galaxy') {
+                // Galaxy Constellation Drawing Rules: Further reach, distinct structural links
+                if (dist < 160) { 
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#bf55ec'; // Cosmic violet lines
+                    // Blend line transparency dynamically using star alpha profiles
+                    ctx.globalAlpha = (1 - (dist / 160)) * 0.18; 
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                    ctx.globalAlpha = 1.0;
+                }
+            } else {
+                // Standard grid/matrix configuration for normal themes
+                if (dist < 110) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = accentColor;
+                    ctx.globalAlpha = (1 - (dist / 110)) * 0.15;
+                    ctx.lineWidth = 0.8;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                    ctx.globalAlpha = 1.0;
+                }
+            }
+        }
+    }
+    requestAnimationFrame(animate);
+}
+
+initParticles();
+animate();
+
+// --- 🛑 GITHUB ENDPOINT LOADER (CHANGE VALUES) 🛑 ---
+const githubUsername = "sigmapoopyman69"; 
+const repoName = "eberts-house-V2"; 
+const folderName = "games"; 
+
+async function fetchGames() {
+    const apiUrl = `https://api.github.com/repos/${githubUsername}/${repoName}/contents/${folderName}`;
+    
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error();
+        
+        const files = await response.json();
+        const gameList = document.getElementById("game-list");
+        document.getElementById("loading-message").style.display = "none";
+
+        files.forEach(file => {
+            if (file.name.endsWith(".html")) {
+                let gameName = file.name.replace(".html", "").replace(/-/g, " ");
+                
+                const listItem = document.createElement("li");
+                listItem.className = "game-card";
+
+                const link = document.createElement("a");
+                link.href = file.path; 
+                link.textContent = gameName;
+                link.className = "game-link";
+
+                listItem.appendChild(link);
+                gameList.appendChild(listItem);
+            }
+        });
+    } catch (error) {
+        document.getElementById("loading-message").textContent = "Unable to resolve target folder. Verify repository settings.";
+    }
+}
+
+fetchGames();
+    </script>
 </body>
 </html>
