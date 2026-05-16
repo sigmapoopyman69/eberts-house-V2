@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, minimum-scale=1, maximum-scale=1">
+  <title>Balatro</title>
+  <base href="https://cdn.jsdelivr.net/gh/thirstygithub/mathamatic-notes@master/">
+
+  <!-- Load custom style sheet -->
+  <link rel="stylesheet" type="text/css" href="theme/love.css">
+
+  <script src="consolewrapper.js"></script>
+  <script>
+    if (typeof console !== 'undefined' && typeof console.debug !== 'function') {
+      console.debug = console.log.bind(console);
+    }
+    var __logger = (typeof console !== 'undefined') ? console : null;
+    if (typeof window !== 'undefined') {
+      if (typeof window.__getWebDB !== 'function') {
+        window.__getWebDB = function(name) {
+          try {
+            return window.localStorage ? window.localStorage.getItem(name) : null;
+          } catch (err) {
+            if (__logger && __logger.warn) {
+              __logger.warn('Unable to access localStorage for __getWebDB:', err);
+            }
+            return null;
+          }
+        };
+      }
+      if (typeof window.__setWebDB !== 'function') {
+        window.__setWebDB = function(name, value) {
+          try {
+            if (window.localStorage) {
+              window.localStorage.setItem(name, value);
+              return true;
+            }
+          } catch (err) {
+            if (__logger && __logger.warn) {
+              __logger.warn('Unable to access localStorage for __setWebDB:', err);
+            }
+          }
+          return false;
+        };
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <center>
+    <div>
+      <!-- <h1>Balatro</h1> -->
+      <canvas id="loadingCanvas" oncontextmenu="event.preventDefault()" width="800" height="600"></canvas>
+      <canvas id="canvas" oncontextmenu="event.preventDefault()" width="100%" height="100%"></canvas>
+    </div>
+  </center>
+
+  <script type='text/javascript'>
+    window.callad = () => {
+      window.parent.postMessage({
+        type: 'adcall'
+      }, '*');
+    }
+    var canvas = document.getElementById("loadingCanvas");
+    canvas.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    canvas.height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+    function goFullScreen() {
+      var canvas = document.getElementById("canvas");
+      if (canvas.requestFullScreen)
+        canvas.requestFullScreen();
+      else if (canvas.webkitRequestFullScreen)
+        canvas.webkitRequestFullScreen();
+      else if (canvas.mozRequestFullScreen)
+        canvas.mozRequestFullScreen();
+    }
+
+    function FullScreenHook() {
+      var canvas = document.getElementById("canvas");
+      canvas.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      canvas.height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    }
+    var loadingContext = document.getElementById('loadingCanvas').getContext('2d');
+
+    function drawLoadingText(text) {
+      var canvas = loadingContext.canvas;
+
+      loadingContext.fillStyle = "rgb(142, 195, 227)";
+      loadingContext.fillRect(0, 0, canvas.scrollWidth, canvas.scrollHeight);
+
+      loadingContext.font = '2em arial';
+      loadingContext.textAlign = 'center'
+      loadingContext.fillStyle = "rgb( 11, 86, 117 )";
+      loadingContext.fillText(text, canvas.scrollWidth / 2, canvas.scrollHeight / 2);
+
+      // loadingContext.fillText("Powered By Emscripten.", canvas.scrollWidth / 2, canvas.scrollHeight / 4);
+      // loadingContext.fillText("Powered By LÖVE.", canvas.scrollWidth / 2, canvas.scrollHeight / 4 * 3);
+    }
+
+    window.onload = function() {
+      window.focus();
+    };
+    window.onclick = function() {
+      window.focus();
+    };
+
+    window.addEventListener("keydown", function(e) {
+      // space and arrow keys
+      if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+      }
+    }, false);
+
+    var Module = {
+      arguments: ["./data"],
+      INITIAL_MEMORY: 256000000,
+      printErr: console.error.bind(console),
+      canvas: (function() {
+        var canvas = document.getElementById('canvas');
+
+        // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+        // application robust, you may want to override this behavior before shipping!
+        // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+        canvas.addEventListener("webglcontextlost", function(e) {
+          alert('WebGL context lost. You will need to reload the page.');
+          e.preventDefault();
+        }, false);
+
+        return canvas;
+      })(),
+      setStatus: function(text) {
+        if (text) {
+          drawLoadingText(text);
+        } else if (Module.remainingDependencies === 0) {
+          document.getElementById('loadingCanvas').style.display = 'none';
+          document.getElementById('canvas').style.visibility = 'visible';
+        }
+      },
+      totalDependencies: 0,
+      remainingDependencies: 0,
+      monitorRunDependencies: function(left) {
+        this.remainingDependencies = left;
+        this.totalDependencies = Math.max(this.totalDependencies, left);
+        Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+      }
+    };
+    Module.setStatus('Downloading...');
+    window.onerror = function(event) {
+      // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+      Module.setStatus('Exception thrown, see JavaScript console');
+      Module.setStatus = function(text) {
+        if (text) Module.printErr('[post-exception status] ' + text);
+      };
+    };
+
+    var applicationLoad = function(e) {
+      Love(Module);
+    }
+  </script>
+  <script type="text/javascript" src="game.js"></script>
+  <script async type="text/javascript" src="love.js" onload="applicationLoad(this)"></script>
+  <!-- <footer>
+      <p>Built with <a href="https://github.com/Davidobot/love.js">love.js</a> <button onclick="goFullScreen();">Go Fullscreen</button><br>Hint: Reload the page if screen is blank</p>
+    </footer> -->
+
+    <!-- Downloaded From Noah's Tutoring Hub -->
+    <script>
+        console.log('%c🔄 Loading game downloaded from Noah\'s Tutoring Hub', 'color: #c27c15; font-weight: bold;');
+    </script>
+    
+    <div id="noahs-watermark" 
+         onclick="window.open('https://noahs-calculus-tutor.pages.dev/', '_blank'); this.style.transform='scale(0.95)'; setTimeout(() => this.style.transform='scale(1)', 100);"
+         ontouchstart="this.style.opacity='0.7';"
+         ontouchend="this.style.opacity='0.9'; setTimeout(() => window.open('https://noahs-calculus-tutor.pages.dev/', '_blank'), 100);"
+         style="
+            all: initial !important;
+            position: fixed !important;
+            bottom: 10px !important;
+            right: 10px !important;
+            background: rgba(0, 0, 0, 0.85) !important;
+            color: #c27c15 !important;
+            padding: 8px 12px !important;
+            border-radius: 5px !important;
+            font-family: 'Courier New', monospace !important;
+            font-size: 12px !important;
+            z-index: 2147483647 !important;
+            border: 1px solid #c27c15 !important;
+            opacity: 0.9 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            backdrop-filter: blur(4px) !important;
+            box-shadow: 0 0 15px rgba(194, 124, 21, 0.4) !important;
+            transition: opacity 0.2s, transform 0.1s !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        ">
+        <img src="https://raw.githubusercontent.com/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/master/cuh.png" 
+             alt="Noah's Tutoring Hub" 
+             style="width: 16px !important; height: 16px !important; border-radius: 3px !important; pointer-events: none !important;"
+             onerror="this.style.display='none'">
+        <span style="pointer-events: none !important;">Downloaded from Noah's Tutoring Hub</span>
+    </div>
+
+    <script>
+        (function() {
+            var gameTitle = "Balatro";
+
+            function createWatermark() {
+                const watermark = document.createElement('div');
+                watermark.id = 'noahs-watermark';
+  
+                const logo = document.createElement('img');
+                logo.src = 'https://raw.githubusercontent.com/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/master/cuh.png';
+                logo.alt = "Noah's Tutoring Hub";
+                logo.style.cssText = 'width: 16px !important; height: 16px !important; border-radius: 3px !important; display: block !important; pointer-events: none !important;';
+
+                const text = document.createElement('span');
+                text.textContent = 'Downloaded from Noah\'s Tutoring Hub';
+                text.style.cssText = 'pointer-events: none !important;';
+
+                watermark.appendChild(logo);
+                watermark.appendChild(text);
+
+                watermark.setAttribute('style', 
+                    'all: initial !important;' +
+                    'position: fixed !important;' +
+                    'bottom: 10px !important;' +
+                    'right: 10px !important;' +
+                    'background: rgba(0, 0, 0, 0.85) !important;' +
+                    'color: #c27c15 !important;' +
+                    'padding: 8px 12px !important;' +
+                    'border-radius: 5px !important;' +
+                    'font-family: \'Courier New\', monospace !important;' +
+                    'font-size: 12px !important;' +
+                    'z-index: 2147483647 !important;' +
+                    'border: 1px solid #c27c15 !important;' +
+                    'opacity: 0.9 !important;' +
+                    'pointer-events: auto !important;' +
+                    'cursor: pointer !important;' +
+                    'display: flex !important;' +
+                    'align-items: center !important;' +
+                    'gap: 8px !important;' +
+                    'backdrop-filter: blur(4px) !important;' +
+                    'box-shadow: 0 0 15px rgba(194, 124, 21, 0.4) !important;' +
+                    'transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s, border-color 0.2s !important;' +
+                    'user-select: none !important;' +
+                    '-webkit-tap-highlight-color: transparent !important;'
+                );
+
+                logo.onerror = function() {
+                    this.style.display = 'none';
+                    watermark.setAttribute('style', watermark.getAttribute('style') + 'padding-left: 12px !important;');
+                };
+
+                watermark.setAttribute('role', 'button');
+                watermark.setAttribute('aria-label', 'Visit Noah\'s Tutoring Hub website');
+                watermark.setAttribute('tabindex', '0');
+
+                watermark.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    this.style.transform = 'scale(0.95) !important';
+                    this.style.transition = 'transform 0.1s !important';
+                    
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1) !important';
+                        window.open('https://noahs-calculus-tutor.pages.dev/', '_blank');
+                    }, 100);
+                });
+
+                watermark.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.style.opacity = '0.7 !important';
+                });
+                
+                watermark.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.style.opacity = '0.9 !important';
+
+                    this.style.transform = 'scale(0.95) !important';
+                    
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1) !important';
+                        window.open('https://noahs-calculus-tutor.pages.dev/', '_blank');
+                    }, 100);
+                });
+
+                watermark.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        window.open('https://noahs-calculus-tutor.pages.dev/', '_blank');
+                    }
+                });
+
+                watermark.addEventListener('mouseenter', function() {
+                    this.style.opacity = '1 !important';
+                    this.style.transform = 'translateY(-2px) !important';
+                    this.style.boxShadow = '0 0 25px rgba(194, 124, 21, 0.8) !important';
+                    this.style.borderColor = '#e69500 !important';
+                });
+                
+                watermark.addEventListener('mouseleave', function() {
+                    this.style.opacity = '0.9 !important';
+                    this.style.transform = 'translateY(0) !important';
+                    this.style.boxShadow = '0 0 15px rgba(194, 124, 21, 0.4) !important';
+                    this.style.borderColor = '#c27c15 !important';
+                });
+
+                watermark.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                return watermark;
+            }
+
+            function addWatermark() {
+                const existing = document.getElementById('noahs-watermark');
+                if (!existing) {
+                    document.body.appendChild(createWatermark());
+                }
+            }
+
+            function protectWatermark() {
+                addWatermark();
+
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.removedNodes) {
+                            Array.from(mutation.removedNodes).forEach(function(node) {
+                                if (node.id === 'noahs-watermark' || 
+                                    (node.querySelector && node.querySelector('#noahs-watermark'))) {
+                                    setTimeout(addWatermark, 100);
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+
+                setInterval(addWatermark, 5000);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', protectWatermark);
+            } else {
+                protectWatermark();
+            }
+
+            console.log('%c🎮 Game: "' + gameTitle + '", Downloaded from Noah\'s Tutoring Hub', 
+                'color: #c27c15; font-weight: bold; font-size: 14px;');
+            console.log('%c📚 Visit https://noahs-calculus-tutor.pages.dev/ for more games!', 
+                'color: #e69500;');
+        })();
+    </script>
+</body>
+
+
+</html>
+
+
+
+
+

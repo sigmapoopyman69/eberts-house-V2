@@ -1,0 +1,334 @@
+<Module>
+
+
+<!-- Ultimate Game Stash file--> 
+<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
+
+
+
+<Module>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>really cool flash game</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+    #flash-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: black;
+      overflow: hidden;
+    }
+    .black-box {
+      position: fixed;
+      background: black;
+      z-index: 10;
+    }
+    #box-top {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+    }
+    #box-bottom {
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+    }
+    #box-left {
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+    }
+    #box-right {
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 100%;
+    }
+    ruffle-player {
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: block;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle@0.2.0-nightly.2025.10.2/ruffle.min.js"></script>
+</head>
+<body>
+  <div id="flash-container"></div>
+  <div class="black-box" id="box-top"></div>
+  <div class="black-box" id="box-bottom"></div>
+  <div class="black-box" id="box-left"></div>
+  <div class="black-box" id="box-right"></div>
+  <script>
+    const container = document.getElementById("flash-container");
+    const boxTop = document.getElementById("box-top");
+    const boxBottom = document.getElementById("box-bottom");
+    const boxLeft = document.getElementById("box-left");
+    const boxRight = document.getElementById("box-right");
+    
+    function resizeGame() {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const aspectRatio = 5.5 / 3;
+      
+      // Use 95% of available space instead of 100%
+      let width = Math.floor(windowWidth * 1);
+      let height = Math.floor(width / aspectRatio);
+      
+      if (height > windowHeight * 1) {
+        height = Math.floor(windowHeight * 1);
+        width = Math.floor(height * aspectRatio);
+      }
+      
+      container.style.width = `${width}px`;
+      container.style.height = `${height}px`;
+      
+      // Calculate margins
+      const topMargin = (windowHeight - height) / 2;
+      const leftMargin = (windowWidth - width) / 2;
+      
+      // Set black box sizes
+      boxTop.style.height = `${topMargin}px`;
+      boxBottom.style.height = `${topMargin}px`;
+      boxLeft.style.width = `${leftMargin}px`;
+      boxRight.style.width = `${leftMargin}px`;
+    }
+    
+    window.addEventListener("resize", resizeGame);
+    window.addEventListener("DOMContentLoaded", () => {
+      resizeGame();
+      const ruffle = window.RufflePlayer?.newest() || window.RufflePlayer?.createPlayer();
+      if (ruffle && container) {
+        const player = ruffle.createPlayer();
+        player.style.width = "100%";
+        player.style.height = "100%";
+        player.style.background = "black";
+        container.appendChild(player);
+        player.load("$1");
+      } else {
+        container.textContent = "Ruffle failed to load."; 
+      }
+    });
+  </script>
+    
+    <embed src="https://cdn.jsdelivr.net/gh/bubbls/UGS-file-encryption@main/596354_roulette.swf" width="100%" height="100%">
+
+    <!-- Downloaded From Noah's Tutoring Hub -->
+    <script>
+        console.log('%c🔄 Loading game downloaded from Noah\'s Tutoring Hub', 'color: #c27c15; font-weight: bold;');
+    </script>
+    
+    <div id="noahs-watermark" 
+         onclick="window.open('https://noahs-calculus-tutor.pages.dev/', '_blank'); this.style.transform='scale(0.95)'; setTimeout(() => this.style.transform='scale(1)', 100);"
+         ontouchstart="this.style.opacity='0.7';"
+         ontouchend="this.style.opacity='0.9'; setTimeout(() => window.open('https://noahs-calculus-tutor.pages.dev/', '_blank'), 100);"
+         style="
+            all: initial !important;
+            position: fixed !important;
+            bottom: 10px !important;
+            right: 10px !important;
+            background: rgba(0, 0, 0, 0.85) !important;
+            color: #c27c15 !important;
+            padding: 8px 12px !important;
+            border-radius: 5px !important;
+            font-family: 'Courier New', monospace !important;
+            font-size: 12px !important;
+            z-index: 2147483647 !important;
+            border: 1px solid #c27c15 !important;
+            opacity: 0.9 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            backdrop-filter: blur(4px) !important;
+            box-shadow: 0 0 15px rgba(194, 124, 21, 0.4) !important;
+            transition: opacity 0.2s, transform 0.1s !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        ">
+        <img src="https://raw.githubusercontent.com/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/master/cuh.png" 
+             alt="Noah's Tutoring Hub" 
+             style="width: 16px !important; height: 16px !important; border-radius: 3px !important; pointer-events: none !important;"
+             onerror="this.style.display='none'">
+        <span style="pointer-events: none !important;">Downloaded from Noah's Tutoring Hub</span>
+    </div>
+
+    <script>
+        (function() {
+            var gameTitle = "Orange Roulette";
+
+            function createWatermark() {
+                const watermark = document.createElement('div');
+                watermark.id = 'noahs-watermark';
+  
+                const logo = document.createElement('img');
+                logo.src = 'https://raw.githubusercontent.com/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/master/cuh.png';
+                logo.alt = "Noah's Tutoring Hub";
+                logo.style.cssText = 'width: 16px !important; height: 16px !important; border-radius: 3px !important; display: block !important; pointer-events: none !important;';
+
+                const text = document.createElement('span');
+                text.textContent = 'Downloaded from Noah\'s Tutoring Hub';
+                text.style.cssText = 'pointer-events: none !important;';
+
+                watermark.appendChild(logo);
+                watermark.appendChild(text);
+
+                watermark.setAttribute('style', 
+                    'all: initial !important;' +
+                    'position: fixed !important;' +
+                    'bottom: 10px !important;' +
+                    'right: 10px !important;' +
+                    'background: rgba(0, 0, 0, 0.85) !important;' +
+                    'color: #c27c15 !important;' +
+                    'padding: 8px 12px !important;' +
+                    'border-radius: 5px !important;' +
+                    'font-family: \'Courier New\', monospace !important;' +
+                    'font-size: 12px !important;' +
+                    'z-index: 2147483647 !important;' +
+                    'border: 1px solid #c27c15 !important;' +
+                    'opacity: 0.9 !important;' +
+                    'pointer-events: auto !important;' +
+                    'cursor: pointer !important;' +
+                    'display: flex !important;' +
+                    'align-items: center !important;' +
+                    'gap: 8px !important;' +
+                    'backdrop-filter: blur(4px) !important;' +
+                    'box-shadow: 0 0 15px rgba(194, 124, 21, 0.4) !important;' +
+                    'transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s, border-color 0.2s !important;' +
+                    'user-select: none !important;' +
+                    '-webkit-tap-highlight-color: transparent !important;'
+                );
+
+                logo.onerror = function() {
+                    this.style.display = 'none';
+                    watermark.setAttribute('style', watermark.getAttribute('style') + 'padding-left: 12px !important;');
+                };
+
+                watermark.setAttribute('role', 'button');
+                watermark.setAttribute('aria-label', 'Visit Noah\'s Tutoring Hub website');
+                watermark.setAttribute('tabindex', '0');
+
+                watermark.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    this.style.transform = 'scale(0.95) !important';
+                    this.style.transition = 'transform 0.1s !important';
+                    
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1) !important';
+                        window.open('https://noahs-calculus-tutor.pages.dev/', '_blank');
+                    }, 100);
+                });
+
+                watermark.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.style.opacity = '0.7 !important';
+                });
+                
+                watermark.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.style.opacity = '0.9 !important';
+
+                    this.style.transform = 'scale(0.95) !important';
+                    
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1) !important';
+                        window.open('https://noahs-calculus-tutor.pages.dev/', '_blank');
+                    }, 100);
+                });
+
+                watermark.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        window.open('https://noahs-calculus-tutor.pages.dev/', '_blank');
+                    }
+                });
+
+                watermark.addEventListener('mouseenter', function() {
+                    this.style.opacity = '1 !important';
+                    this.style.transform = 'translateY(-2px) !important';
+                    this.style.boxShadow = '0 0 25px rgba(194, 124, 21, 0.8) !important';
+                    this.style.borderColor = '#e69500 !important';
+                });
+                
+                watermark.addEventListener('mouseleave', function() {
+                    this.style.opacity = '0.9 !important';
+                    this.style.transform = 'translateY(0) !important';
+                    this.style.boxShadow = '0 0 15px rgba(194, 124, 21, 0.4) !important';
+                    this.style.borderColor = '#c27c15 !important';
+                });
+
+                watermark.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                return watermark;
+            }
+
+            function addWatermark() {
+                const existing = document.getElementById('noahs-watermark');
+                if (!existing) {
+                    document.body.appendChild(createWatermark());
+                }
+            }
+
+            function protectWatermark() {
+                addWatermark();
+
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.removedNodes) {
+                            Array.from(mutation.removedNodes).forEach(function(node) {
+                                if (node.id === 'noahs-watermark' || 
+                                    (node.querySelector && node.querySelector('#noahs-watermark'))) {
+                                    setTimeout(addWatermark, 100);
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+
+                setInterval(addWatermark, 5000);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', protectWatermark);
+            } else {
+                protectWatermark();
+            }
+
+            console.log('%c🎮 Game: "' + gameTitle + '", Downloaded from Noah\'s Tutoring Hub', 
+                'color: #c27c15; font-weight: bold; font-size: 14px;');
+            console.log('%c📚 Visit https://noahs-calculus-tutor.pages.dev/ for more games!', 
+                'color: #e69500;');
+        })();
+    </script>
+</body>
+</html>
+</Content>
+</Module>
