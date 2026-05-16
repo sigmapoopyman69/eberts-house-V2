@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Games Site</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .game-link { display: block; margin: 10px 0; font-size: 18px; text-transform: capitalize; }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 Game Library</h1>
+    <div id="game-container">
+        <p id="loading-message">Loading games...</p>
+        <ul id="game-list"></ul> 
+    </div>
+
+    <script>
+        // --- 🛑 IMPORTANT: CHANGE THESE TO YOUR GITHUB DETAILS 🛑 ---
+        const githubUsername = "YOUR_GITHUB_USERNAME"; 
+        const repoName = "YOUR_REPO_NAME"; 
+        const folderName = "games"; 
+        // ------------------------------------------------------------
+
+        async function fetchGames() {
+            // This is the GitHub API URL that looks inside your specific folder
+            const apiUrl = `https://api.github.com/repos/${githubUsername}/${repoName}/contents/${folderName}`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                
+                // If the folder isn't found or the repo is private, this catches the error
+                if (!response.ok) throw new Error("Could not load the games folder.");
+                
+                const files = await response.json();
+                const gameList = document.getElementById("game-list");
+                document.getElementById("loading-message").style.display = "none";
+
+                // Loop through every file GitHub found in the folder
+                files.forEach(file => {
+                    // We only want to list .html files
+                    if (file.name.endsWith(".html")) {
+                        
+                        // Create the game name by removing ".html" and replacing dashes with spaces
+                        let gameName = file.name.replace(".html", "").replace(/-/g, " ");
+
+                        // Create the HTML list item and link
+                        const listItem = document.createElement("li");
+                        const link = document.createElement("a");
+                        link.href = file.path; // Links directly to the games/filename.html
+                        link.textContent = gameName;
+                        link.className = "game-link";
+
+                        // Add the link to the page
+                        listItem.appendChild(link);
+                        gameList.appendChild(listItem);
+                    }
+                });
+            } catch (error) {
+                document.getElementById("loading-message").textContent = "Error loading games. Make sure your repo is public and the details are correct!";
+                console.error(error);
+            }
+        }
+
+        // Run the function when the page loads
+        fetchGames();
+    </script>
+
+</body>
+</html>
